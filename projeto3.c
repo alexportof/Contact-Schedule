@@ -23,7 +23,8 @@ typedef struct elemento Elem;
 Lista *criaListaVazia();
 void libera_lista(Lista *li);
 int *le_arquivo();
-void adiciona_na_lista(Lista *li, FILE *fp, struct contato contato);
+void carrega_arquivo(Lista *li, FILE *fp, struct contato contato);
+Lista *insere_inicio(Lista *list, struct contato contato);
 
 int main()
 {
@@ -32,34 +33,39 @@ int main()
     FILE *fp;
     list = criaListaVazia();
     fp = le_arquivo();
-    adiciona_na_lista(list, fp, contato);
+    carrega_arquivo(list, fp, contato);
     libera_lista(list);
     return 0;
 }
+Lista *insere_inicio(Lista *list, struct contato contato)
+{
+}
 
-void adiciona_na_lista(Lista *li, FILE *fp, struct contato contato)
+void carrega_arquivo(Lista *li, FILE *fp, struct contato contato)
 {
     char nome[101];
-    char linha = "$";
+    char sobrenome[101];
+    char linha[2];
     char telefone[11];
     char endereco[100];
-    char cep[10];
+    int cep;
     char data_nasc[11];
-    while (linha = "$")
+    while (!feof(fp))
     {
-        fgets(nome, sizeof(nome), fp);
+        fscanf(fp, "%s%s\n", &nome, &sobrenome);
+        strcat(nome, " ");
+        strcat(nome, sobrenome);
+        fscanf(fp, "%s\n", &telefone);
+        fgets(endereco, sizeof(endereco), fp);
+        fscanf(fp, "%d\n", &cep);
+        fscanf(fp, "%s\n", &data_nasc);
+        fscanf(fp, "%c\n", &linha);
         strcpy(contato.nome, nome);
-        fgets(telefone, sizeof(telefone), fp);
         strcpy(contato.telefone, telefone);
-        fgets(endereco, sizeof(endereco), fp);
-        fgets(endereco, sizeof(endereco), fp);
         strcpy(contato.endereco, endereco);
-        fgets(cep, sizeof(cep), fp);
-        contato.cep = atoi(cep);
-        fgets(data_nasc, sizeof(data_nasc), fp);
         strcpy(contato.data_nasc, data_nasc);
-        fgets(linha, sizeof(linha), fp);
-        printf("%c", contato.nome);
+        contato.cep = cep;
+        li = insere_inicio(li, contato);
     }
 }
 
