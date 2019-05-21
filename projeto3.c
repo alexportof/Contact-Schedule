@@ -24,7 +24,8 @@ Lista *criaListaVazia();
 void libera_lista(Lista *li);
 int *le_arquivo();
 void carrega_arquivo(Lista *li, FILE *fp, struct contato contato);
-Lista *insere_inicio(Lista *list, struct contato contato);
+void insere_inicio(Lista *li, struct contato contato);
+//int consulta_lista(Lista *li, int pos, struct contato *cont);
 
 int main()
 {
@@ -34,11 +35,44 @@ int main()
     list = criaListaVazia();
     fp = le_arquivo();
     carrega_arquivo(list, fp, contato);
+    int x = tamanho_lista(list);
+    printf("%d", x);
     libera_lista(list);
     return 0;
 }
-Lista *insere_inicio(Lista *list, struct contato contato)
+
+// int consulta_lista(Lista *li, int pos, struct contato *cont)
+// {
+//     if (li == NULL || pos <= 0)
+//         return 0;
+//     Elem *no = *li;
+//     int i = 1;
+//     while (no != NULL && i < pos)
+//     {
+//         no = no->prox;
+//         i++;
+//     }
+//     if (no == NULL)
+//         return 0;
+//     else
+//     {
+//         *cont = no->dados;
+//         return 1;
+//     }
+// }
+void insere_inicio(Lista *li, struct contato contato)
 {
+    if (li == NULL)
+        exit(1);
+    Elem *no = (Elem *)malloc(sizeof(Elem));
+    if (no == NULL)
+        exit(1);
+    no->dados = contato;
+    no->prox = (*li);
+    no->ant = NULL;
+    if (*li != NULL)
+        (*li)->ant = no;
+    *li = no;
 }
 
 void carrega_arquivo(Lista *li, FILE *fp, struct contato contato)
@@ -65,7 +99,7 @@ void carrega_arquivo(Lista *li, FILE *fp, struct contato contato)
         strcpy(contato.endereco, endereco);
         strcpy(contato.data_nasc, data_nasc);
         contato.cep = cep;
-        li = insere_inicio(li, contato);
+        insere_inicio(li, contato);
     }
 }
 
