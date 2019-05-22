@@ -28,7 +28,11 @@ void insere_inicio(Lista *li, struct contato contato);
 int carregar_menu();
 void menu(int opcao, Lista *li);
 void criar_contato(Lista *li);
-//int consulta_lista(Lista *li, int pos, struct contato *cont);
+int tamanho_lista(Lista *li);
+void buscar_consulta_lista(Lista *li, char string[100]);
+void consultar_lista(Lista *li);
+void remover_contato(Lista *li);
+void remover_contato_lista(Lista *li, char string[100]);
 
 int main()
 {
@@ -39,33 +43,80 @@ int main()
     list = criaListaVazia();
     fp = le_arquivo();
     carrega_arquivo(list, fp, contato);
-    while (opcao <= 5)
-    {
-        opcao = carregar_menu();
-        menu(opcao, list);
-    }
+    opcao = carregar_menu();
+    menu(opcao, list);
     return 0;
 }
+void remover_contato_lista(Lista *li, char string[100])
+{
+    if (li == NULL)
+    {
+        printf("Lista Vazia");
+        exit(1);
+    }
+    Elem *no = *li;
+    int cont = 0;
+    while (no != NULL)
+    {
+        if (strcmp(no->dados.nome, string) == 0)
+        {
+            free(no);
+        }
 
-// int consulta_lista(Lista *li, int pos, struct contato *cont)
-// {
-//     if (li == NULL || pos <= 0)
-//         return 0;
-//     Elem *no = *li;
-//     int i = 1;
-//     while (no != NULL && i < pos)
-//     {
-//         no = no->prox;
-//         i++;
-//     }
-//     if (no == NULL)
-//         return 0;
-//     else
-//     {
-//         *cont = no->dados;
-//         return 1;
-//     }
-// }
+        *li = no->prox;
+    }
+}
+void remover_contato(Lista *li)
+{
+    int opcao = 0;
+    char string[100];
+    printf("Escreva a String que Deseja Eliminar nos Registros: ");
+    scanf("%s", string);
+    buscar_consulta_lista(li, string);
+    opcao = carregar_menu();
+    menu(opcao, li);
+}
+void buscar_consulta_lista(Lista *li, char string[100])
+{
+    if (li == NULL)
+    {
+        printf("Lista Vazia");
+        exit(1);
+    }
+    Elem *no = *li;
+    int cont = 0;
+    while (no != NULL)
+    {
+
+        printf("\t\t%d\n\n\n\n", strcmp(no->dados.nome, string));
+        if (strcmp(no->dados.nome, string) == 0)
+            printf("POTTAAAAAA");
+        no = no->prox;
+    }
+}
+void consultar_lista(Lista *li)
+{
+    int opcao = 0;
+    char string[100];
+    printf("Escreva a String que Deseja Visualizar os Registros: ");
+    scanf("%s", string);
+    buscar_consulta_lista(li, string);
+    opcao = carregar_menu();
+    menu(opcao, li);
+}
+int tamanho_lista(Lista *li)
+{
+    if (li == NULL)
+        return 0;
+    int cont = 0;
+    Elem *no = *li;
+    while (no != NULL)
+    {
+        cont++;
+        no = no->prox;
+    }
+    return cont;
+}
 void insere_inicio(Lista *li, struct contato contato)
 {
     if (li == NULL)
@@ -139,6 +190,40 @@ void libera_lista(Lista *li)
         free(li);
     }
 }
+
+void menu(int opcao, Lista *li)
+{
+    if (opcao > 5 || opcao <= 0)
+    {
+        printf("\nNumero Invalido!\n");
+        exit(1);
+    }
+    switch (opcao)
+    {
+    case 1:
+        criar_contato(li);
+
+    case 2:
+        remover_contato(li);
+
+    case 3:
+        consultar_lista(li);
+
+    case 4:
+
+    case 5:
+        libera_lista(li);
+    }
+}
+int carregar_menu()
+{
+    int opcao;
+    printf("-----------------------------\nMenu Da Agenda de Contatos\n-----------------------------\n");
+    printf("1 - Inserir Novo Registro\n2 - Remover Registros Que Contenham Certa String no Nome\n3 - Visualizar Registros Que Contenham Certa String No Nome\n4 - Visualizar Os Registros em Ordem Alfabética\n5 - Sair\n");
+    printf("\n\nTecle a Opcao Escolhida: ");
+    scanf("%d", &opcao);
+    return opcao;
+}
 void criar_contato(Lista *li)
 {
     struct contato contato;
@@ -148,7 +233,7 @@ void criar_contato(Lista *li)
     char telefone1[6];
     char telefone2[5];
     char endereco[100];
-    int cep;
+    int cep, opcao = 0;
     char data_nasc[11], mes[11], ano[11];
 
     printf("Nome: ");
@@ -183,27 +268,6 @@ void criar_contato(Lista *li)
     strcat(data_nasc, ano);
     strcpy(contato.data_nasc, data_nasc);
     insere_inicio(li, contato);
-}
-void menu(int opcao, Lista *li)
-{
-    switch (opcao)
-    {
-    case 1:
-        criar_contato(li);
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-        libera_lista(li);
-        break;
-    }
-}
-int carregar_menu()
-{
-    int opcao;
-    printf("-----------------------------\nMenu Da Agenda de Contatos\n-----------------------------\n");
-    printf("1 - Inserir Novo Registro\n2 - Remover Registros Que Contenham Certa String no Nome\n3 - Visualizar Registros Que Contenham Certa String No Nome\n4 - Visualizar Os Registros em Ordem Alfabética\n5 - Sair\n");
-    printf("\n\nTecle a Opcao Escolhida: ");
-    scanf("%d", &opcao);
-    return opcao;
+    opcao = carregar_menu();
+    menu(opcao, li);
 }
